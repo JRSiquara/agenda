@@ -17,3 +17,6 @@ class Evento(models.Model):     # Esta classe cria a tabela evento.
 
     def __str__(self):
         return self.titulo  # Faz aparecer na tela o nome do evento.
+
+    def get_data_evento(self):
+        return self.data_evento.strftime('%d/%m/%Y - %H:%M h')
