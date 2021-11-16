@@ -9,6 +9,7 @@ class Evento(models.Model):     # Esta classe cria a tabela evento.
     data_evento = models.DateTimeField(verbose_name='Data do Evento')
     data_criacao = models.DateTimeField(auto_now=True)  # Ao inserir o registro preenche automaticamente.
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    local = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:                 # Após executar o comando para criar as tabelas no terminal, o django por
         db_table = 'evento'     # default coloca o nome do app (neste caso é "core" no nome da tabela "core_evento".
