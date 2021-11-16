@@ -44,3 +44,20 @@ def lista_eventos(request):                # view
     evento = Evento.objects.filter(usuario=usuario) # É a mesma coisa do "all()" mas agora esta com filtro.
     dados = {'eventos':evento}
     return render(request, 'agenda.html', dados)   # template "D:\Drago\DIO-CURSOS-EAD\PYTHON\Projetos\agenda\templates"
+
+@login_required(login_url='/login/')
+def evento(request):
+    return render(request, 'evento.html')
+
+@login_required(login_url='/login/')
+def submit_evento(request):
+    if request.POST:
+        titulo = request.POST.get('titulo')
+        data_evento = request.POST.get('data_evento')
+        descricao = request.POST.get('descricao')
+        usuario = request.user
+        Evento.objects.create(titulo=titulo,
+                              data_evento=data_evento,
+                              descricao=descricao,
+                              usuario=usuario)
+    return redirect('/')
