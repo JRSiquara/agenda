@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime
 
 # Create your models here.
 
@@ -12,7 +13,7 @@ class Evento(models.Model):     # Esta classe cria a tabela evento.
     local = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:                 # Após executar o comando para criar as tabelas no terminal, o django por
-        db_table = 'evento'     # default coloca o nome do app (neste caso é "core" no nome da tabela "core_evento".
+        db_table = 'evento'     # default coloca o nome do app (neste caso é "core" no nome da tabela "core_evento").
                                 # Para definir qual o nome da tabela tem que incluir esta classe Meta: determinando
                                 # o real nome da tabela.
 
@@ -20,7 +21,13 @@ class Evento(models.Model):     # Esta classe cria a tabela evento.
         return self.titulo  # Faz aparecer na tela o nome do evento.
 
     def get_data_evento(self):
-        return self.data_evento.strftime('%d/%m/%Y - %H:%M h')
-
-    def get_data_input_evento(self):
+        return self.data_evento.strftime('%d/%m/%Y - %H:%M h') # Era este q estava, mas ñ exibia por causa
+                                                               # do formato. Esta usando o de baixo.
+    def get_data_input_evento(self):     #Formata para poder exibir no form. Esta no evento.html.
         return self.data_evento.strftime('%Y-%m-%dT%H:%M')
+
+    def get_evento_atrasado(self):
+        if self.data_evento < datetime.now():
+            return True
+        else:
+            return False

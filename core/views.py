@@ -1,8 +1,11 @@
+from django.contrib.auth.models import User  # Inserido através do (alt+enter)
 from django.shortcuts import render, redirect
 from core.models import Evento
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from datetime import datetime, timedelta
+from django.http.response import Http404, JsonResponse
 
 #from django.core.exceptions import ObjectDoesNotExist
 # Create your views here.
@@ -39,10 +42,12 @@ def submit_login(request):
 @login_required(login_url='/login/')        # @ identifica que é um decorador
 def lista_eventos(request):                # view
     usuario = request.user
+    data_atual = datetime.now() - timedelta(hours=1) # Diminui 1 hora do tempo atual
     #evento = Evento.objects.get(id=2)      # Faz uma consulta, apenas um registro.
     #evento = Evento.objects.all()          # Faz uma consulta, pegando todos registros. Traz uma lista.
-    evento = Evento.objects.filter(usuario=usuario) # É a mesma coisa do "all()" mas agora esta com filtro.
-    dados = {'eventos':evento}
+    evento = Evento.objects.filter(usuario=usuario, # É a mesma coisa do "all()" mas agora esta com filtro.
+                                   data_evento__gt=data_atual) # "__gt" equivale ao ">="
+    dados = {'eventos':evento}                                 # "__lt" equivale ao "<="
     return render(request, 'agenda.html', dados)   # template "D:\Drago\DIO-CURSOS-EAD\PYTHON\Projetos\agenda\templates"
 
 @login_required(login_url='/login/')
@@ -86,7 +91,20 @@ def submit_evento(request):
 @login_required(login_url='/login/')
 def delete_evento(request, id_evento):
     usuario = request.user
-    evento = Evento.objects.get(id=id_evento)
+    try:
+        evento = Evento.objects.get(id=id_evento)
+    except Exception:
+        raise Http404()
     if usuario == evento.usuario:
         evento.delete()
+    else:
+        raise Http404()
     return redirect('/')
+
+# @login_required(login_url='/login/')  # Caso quiera passar para uma aplicação externa, como se fosse uma API
+def json_lista_evento(request, id_usuario):         # (ir na url "agenda/evento/)
+    usuario = User.objects.get(id=id_usuario)
+    #usuario = request.user
+    evento = Evento.objects.filter(usuario=usuario).values('id', 'titulo')
+    return JsonResponse(list(evento), safe=False) # Precisa desse safe=False pq tá passando uma lista.
+
