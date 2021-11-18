@@ -20,15 +20,15 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path('agenda/<var>/', views.agenda),      # Existe essa forma....
+    # path('agenda/<var>/', views.agenda),      # Existe essa forma....
     # path('agenda/desc/<var>/', views.desc),
-    path('agenda/', views.lista_eventos),
-    path('agenda/lista/<int:id_usuario>/', views.json_lista_evento),
+    #path('agenda/', views.lista_eventos),
+    path('agenda/', views.lista_eventos_historico),
+    path('agenda/lista/<int:id_usuario>/', views.json_lista_evento),  # valida usuário
     path('agenda/evento/', views.evento),
     path('agenda/evento/submit', views.submit_evento),
     path('agenda/evento/delete/<int:id_evento>/', views.delete_evento),
-    #path('', views.index),
-    path('', RedirectView.as_view(url='/agenda/')), # Mas esta forma pareCe ser a melhor.
+    path('', RedirectView.as_view(url='/agenda/')),  # Mas esta forma pareCe ser a melhor.
     path('login/', views.login_user),
     path('login/submit', views.submit_login),
     path('logout/', views.logout_user)

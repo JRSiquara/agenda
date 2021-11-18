@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Create your models here.
 
@@ -23,11 +23,19 @@ class Evento(models.Model):     # Esta classe cria a tabela evento.
     def get_data_evento(self):
         return self.data_evento.strftime('%d/%m/%Y - %H:%M h') # Era este q estava, mas ñ exibia por causa
                                                                # do formato. Esta usando o de baixo.
+                                                               # get_data_evento continha no agenda.html
     def get_data_input_evento(self):     #Formata para poder exibir no form. Esta no evento.html.
         return self.data_evento.strftime('%Y-%m-%dT%H:%M')
 
     def get_evento_atrasado(self):
         if self.data_evento < datetime.now():
             return True
+        else:
+            return False
+
+    def get_evento_falta_menos_uma_hora(self):
+        if datetime.now() < self.data_evento:
+            if datetime.now() > (self.data_evento - timedelta(hours=1)):
+                return True
         else:
             return False

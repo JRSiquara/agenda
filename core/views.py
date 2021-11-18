@@ -50,6 +50,15 @@ def lista_eventos(request):                # view
     dados = {'eventos':evento}                                 # "__lt" equivale ao "<="
     return render(request, 'agenda.html', dados)   # template "D:\Drago\DIO-CURSOS-EAD\PYTHON\Projetos\agenda\templates"
 
+@login_required(login_url='/login/')        # @ identifica que é um decorador
+def lista_eventos_historico(request):                # view
+    usuario = request.user
+    data_atual = datetime.now()
+    evento = Evento.objects.filter(usuario=usuario, # É a mesma coisa do "all()" mas agora esta com filtro.
+                                   data_evento__lt=data_atual) # "__gt" equivale ao ">="
+    dados = {'eventos':evento}                                 # "__lt" equivale ao "<="
+    return render(request, 'agenda_historico.html', dados)   # template "D:\Drago\DIO-CURSOS-EAD\PYTHON\Projetos\agenda\templates"
+
 @login_required(login_url='/login/')
 def evento(request):
     id_evento = request.GET.get('id')
@@ -101,10 +110,10 @@ def delete_evento(request, id_evento):
         raise Http404()
     return redirect('/')
 
-# @login_required(login_url='/login/')  # Caso quiera passar para uma aplicação externa, como se fosse uma API
+# @login_required(login_url='/login/')  # Caso queira passar para uma aplicação externa, como se fosse uma API
 def json_lista_evento(request, id_usuario):         # (ir na url "agenda/evento/)
-    usuario = User.objects.get(id=id_usuario)
+    usuario = User.objects.get(id=id_usuario)       # Pesquisa usuário
     #usuario = request.user
-    evento = Evento.objects.filter(usuario=usuario).values('id', 'titulo')
+    evento = Evento.objects.filter(usuario=usuario).values('id', 'titulo')  # Filtra os registros do usuário
     return JsonResponse(list(evento), safe=False) # Precisa desse safe=False pq tá passando uma lista.
 
